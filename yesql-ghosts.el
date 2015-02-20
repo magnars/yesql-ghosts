@@ -129,3 +129,4 @@
 (add-hook 'after-save-hook 'yesqlg-auto-show-ghosts)
 
 (provide 'yesql-ghosts)
+;;; yesql-ghosts.el ends here
