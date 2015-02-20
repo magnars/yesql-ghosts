@@ -12,7 +12,7 @@ time you save.
 
 I highly recommend installing yesql-ghosts through elpa.
 
-It will soon be available on [marmalade](http://marmalade-repo.org/) and
+It is available on [marmalade](http://marmalade-repo.org/) and
 [melpa](http://melpa.milkbox.net/):
 
     M-x package-install yesql-ghosts
