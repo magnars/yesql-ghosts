@@ -18,7 +18,7 @@ It will soon be available on [marmalade](http://marmalade-repo.org/) and
     M-x package-install yesql-ghosts
 
 You can also install the dependencies on your own, and just dump
-tagedit in your path somewhere:
+yesql-ghosts in your path somewhere:
 
  - <a href="https://github.com/magnars/s.el">s.el</a>
  - <a href="https://github.com/magnars/dash.el">dash.el</a>
