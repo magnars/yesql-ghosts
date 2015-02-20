@@ -38,7 +38,7 @@ or revert the buffer.
 
 If you want to set up your own mechanisms to display and hide the ghosts,
 set `yesql-ghosts-show-ghosts-automatically` to `nil`, and use
-`yesqlg-display-query-ghosts` and `yesqlg-remove-overlays` yourself.
+`yesql-ghosts-display-query-ghosts` and `yesql-ghosts-remove-overlays` yourself.
 
 You can also include the descriptions from yesql, you know these ones:
 

@@ -43,11 +43,11 @@
 
 (defcustom yesql-ghosts-show-ghosts-automatically t
   "A non-nil value if you want to show the ghosts when a buffer loads.
-   Otherwise, use `yesqlg-display-query-ghosts' and `yesqlg-remove-overlays'
+   Otherwise, use `yesql-ghosts-display-query-ghosts' and `yesql-ghosts-remove-overlays'
    to show and hide them."
   :group 'yesql-ghosts)
 
-(defun yesqlg-extract-query-info (lines)
+(defun yesql-ghosts-extract-query-info (lines)
   (let* ((has-desc (s-starts-with? "--" (cadr lines)))
          (name (->> (car lines)
                     (s-chop-prefix "-- name:")
@@ -65,32 +65,32 @@
                     (--map (s-chop-prefix ":" it)))))
     (list name desc (cons "db" args) body)))
 
-(defun yesqlg-parse-queries (content)
+(defun yesql-ghosts-parse-queries (content)
   (->> (s-lines content)
        (--partition-by-header
         (s-starts-with? "-- name:" it))
-       (-map 'yesqlg-extract-query-info)))
+       (-map 'yesql-ghosts-extract-query-info)))
 
-(defun yesqlg-load-queries (file)
+(defun yesql-ghosts-load-queries (file)
   (when file
-    (yesqlg-parse-queries
+    (yesql-ghosts-parse-queries
      (with-current-buffer
          (find-file-noselect file)
        (buffer-substring-no-properties (point-min) (point-max))))))
 
-(defun yesqlg-format-query (q)
+(defun yesql-ghosts-format-query (q)
   (-let (((name desc args body) q))
-    (if (and yesqlg-show-descriptions desc)
+    (if (and yesql-ghosts-show-descriptions desc)
         (format "(defn %s\n  \"%s\"\n  [%s])" name desc (s-join " " args))
       (format "(defn %s [%s])" name (s-join " " args)))))
 
-(defun yesqlg-remove-overlays ()
+(defun yesql-ghosts-remove-overlays ()
   (interactive)
   (--each (overlays-in (point-min) (point-max))
-    (when (eq (overlay-get it 'type) 'yesqlg)
+    (when (eq (overlay-get it 'type) 'yesql-ghosts)
       (delete-overlay it))))
 
-(defun yesqlg-fontify-ghost (s)
+(defun yesql-ghosts-fontify-ghost (s)
   (set-text-properties
    0 (length s)
    `(face (:foreground ,(format "#%02x%02x%02x" 104 104 104)
@@ -98,35 +98,35 @@
    s)
   s)
 
-(defun yesqlg-insert-overlay (content)
+(defun yesql-ghosts-insert-overlay (content)
   (let ((o (make-overlay (point) (point) nil nil t)))
-    (overlay-put o 'type 'yesqlg)
-    (overlay-put o 'before-string (yesqlg-fontify-ghost (concat content "\n")))))
+    (overlay-put o 'type 'yesql-ghosts)
+    (overlay-put o 'before-string (yesql-ghosts-fontify-ghost (concat content "\n")))))
 
-(defun yesqlg-display-next-queries ()
+(defun yesql-ghosts-display-next-queries ()
   (when (search-forward "(defqueries \"" nil t)
     (let* ((path (thing-at-point 'filename))
            (resource (cider-sync-request:resource path))
-           (queries (yesqlg-load-queries resource)))
+           (queries (yesql-ghosts-load-queries resource)))
       (when queries
         (end-of-line)
         (forward-char 1)
-        (yesqlg-insert-overlay
-         (s-join "\n" (-map 'yesqlg-format-query queries)))))))
+        (yesql-ghosts-insert-overlay
+         (s-join "\n" (-map 'yesql-ghosts-format-query queries)))))))
 
-(defun yesqlg-display-query-ghosts ()
+(defun yesql-ghosts-display-query-ghosts ()
   (interactive)
-  (yesqlg-remove-overlays)
+  (yesql-ghosts-remove-overlays)
   (save-excursion
     (goto-char (point-min))
-    (while (yesqlg-display-next-queries))))
+    (while (yesql-ghosts-display-next-queries))))
 
-(defun yesqlg-auto-show-ghosts ()
-  (when (and cider-mode yesqlg-show-ghosts-automatically)
-    (yesqlg-display-query-ghosts)))
+(defun yesql-ghosts-auto-show-ghosts ()
+  (when (and cider-mode yesql-ghosts-show-ghosts-automatically)
+    (yesql-ghosts-display-query-ghosts)))
 
-(add-hook 'cider-mode-hook 'yesqlg-auto-show-ghosts)
-(add-hook 'after-save-hook 'yesqlg-auto-show-ghosts)
+(add-hook 'cider-mode-hook 'yesql-ghosts-auto-show-ghosts)
+(add-hook 'after-save-hook 'yesql-ghosts-auto-show-ghosts)
 
 (provide 'yesql-ghosts)
 ;;; yesql-ghosts.el ends here
