@@ -47,6 +47,11 @@
    to show and hide them."
   :group 'yesql-ghosts)
 
+(defface yesql-ghosts-defn-face
+  '((t :foreground "#686868" :background "#181818"))
+  "Face for yesql ghost defns inserted when in cider-mode."
+  :group 'yesql-ghosts)
+
 (defun yesql-ghosts-extract-query-info (lines)
   (let* ((has-desc (s-starts-with? "--" (cadr lines)))
          (name (->> (car lines)
@@ -91,11 +96,7 @@
       (delete-overlay it))))
 
 (defun yesql-ghosts-fontify-ghost (s)
-  (set-text-properties
-   0 (length s)
-   `(face (:foreground ,(format "#%02x%02x%02x" 104 104 104)
-                       :background ,(format "#%02x%02x%02x" 24 24 24)))
-   s)
+  (set-text-properties 0 (length s) `(face 'yesql-ghosts-defn-face) s)
   s)
 
 (defun yesql-ghosts-insert-overlay (content)
